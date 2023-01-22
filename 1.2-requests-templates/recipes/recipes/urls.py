@@ -15,7 +15,15 @@ Including another URLconf
 """
 
 from django.urls import path
+from calculator.views import get_recipe, get_info
 
 urlpatterns = [
     # здесь зарегистрируйте вашу view-функцию
+    path('omlet/', get_recipe),
+    path('pasta/', get_recipe),
+    path('buter/', get_recipe),
+    path('', get_info),
 ]
+
+handler404 = "calculator.views.page_not_found_view"
+#handler500 = "calculator.views.page_not_found_view"
