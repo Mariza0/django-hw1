@@ -25,14 +25,13 @@ def get_recipe(request):
     path = request.META.get('PATH_INFO').strip('/') #omlet
     print(path)
     servings_param = request.GET.get('servings')
-    servings_param = abs(int(servings_param))
     print('servings_param', servings_param)
     context = {
         'recipe': DATA.get(path)
     }
     if servings_param is not None:
-        context = {'recipe': {key: "{:.2f}".format(float(value * servings_param))
-                          for key, value in context.get('recipe').items()}}
+        context = {'recipe': {key: value * abs(int(servings_param))
+                              for key, value in context.get('recipe').items()}}
     print(context)
     return render(request, 'calculator/index.html', context)
 
