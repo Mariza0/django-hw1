@@ -18,6 +18,7 @@ def bus_stations(request):
     with open('data-398-2018-08-30.csv', newline='') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
+                print(row)
                 name = row['Name']
                 street = row['Street']
                 district = row['District']
