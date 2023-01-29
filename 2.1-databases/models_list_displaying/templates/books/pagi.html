@@ -4,20 +4,34 @@
 {% block content %}
     <div class="container">
         <div class="header">
-            <h1><a href="/books">Каталог</a></h1>
+
+            <h1><a href="/books/">Каталог</a></h1>
         </div>
         <div class="row">
-            {% for book in books %}
                 <div class="book">
-                    <a href="{% url 'pagi' book.slug %}">
-
+                        <a href="{% url 'pagi' book.slug %}">
                         <h4>{{ book.name }}</h4></a>
+
                         <div class="author">Автор: {{ book.author }}</div>
                         <div class="date">Дата публикации: {{ book.pub_date|date:"Y-m-d" }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         </div>
                         <p>&nbsp</p>
+                    </div>
+
                 </div>
-            {% endfor %}
+                        <body>
+                        <div class="pages">
+                             <span class="page-links">
+                                    <a class="button button-primary" href="{% url 'pagi' previous_slug %}"><-{{ previous_slug }}   </a>
+                                    <a class="button button-primary" href="{% url 'pagi' next_slug %}">   {{ next_slug }}-></a>
+
+                             </span>
+
+                            </div>
+                        </body>
         </div>
-    </div>
+
 {% endblock %}
+
+
+
