@@ -13,10 +13,19 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+from measurement.views import SensorsView, SensorView, MeasureCreate, Image
+from smart_home import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('measurement.urls')),  # подключаем маршруты из приложения measurement
+    path('api/', include('measurement.urls')),
+    path('sensors/', SensorsView.as_view()),
+    path('details/<pk>/', SensorView.as_view()),
+    path('measurements/', MeasureCreate.as_view()),
+    path(r"upload[\W]upload[\W]sensor(_)[0-9]+(_)datchik.png", Image)
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
