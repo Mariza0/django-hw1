@@ -8,7 +8,7 @@ class Sensor(models.Model):
         verbose_name_plural = 'Датчики'
 
     def __str__(self):
-        return self.name + " " + self.description
+        return str(self.id) + " " + self.name + " " + self.description
 
 def user_directory_path(instance, imagename):
     return 'upload/sensor_{0}_{1}'.format(instance.sensor_id.id, imagename)
