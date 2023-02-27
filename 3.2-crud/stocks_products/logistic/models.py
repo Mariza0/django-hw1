@@ -6,14 +6,20 @@ class Product(models.Model):
     title = models.CharField(max_length=60, unique=True)
     description = models.TextField(null=True, blank=True)
 
+    def __str__(self):
+        return self.title + " " + self.description
+
 
 class Stock(models.Model):
     address = models.CharField(max_length=200, unique=True)
     products = models.ManyToManyField(
         Product,
         through='StockProduct',
-        related_name='stocks',
+        related_name='stocks'
     )
+
+    def __str__(self):
+        return str(self.id) + " " + self.address
 
 
 class StockProduct(models.Model):
@@ -33,3 +39,6 @@ class StockProduct(models.Model):
         decimal_places=2,
         validators=[MinValueValidator(0)],
     )
+
+    def __str__(self):
+        return self.stock + self.product
