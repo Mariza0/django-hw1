@@ -40,5 +40,5 @@ class StockProduct(models.Model):
         validators=[MinValueValidator(0)],
     )
 
-    def __str__(self):
-        return self.stock + self.product
+    # def __str__(self):
+    #     return self.stock + self.product
