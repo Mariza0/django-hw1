@@ -1,9 +1,18 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
+from advertisements.models import Advertisement
+from advertisements.serializers import AdvertisementSerializer
+
 
 class AdvertisementViewSet(ModelViewSet):
     """ViewSet для объявлений."""
+    queryset = Advertisement.objects.all()
+    serializer_class = AdvertisementSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
 
     # TODO: настройте ViewSet, укажите атрибуты для кверисета,
     #   сериализаторов и фильтров
@@ -13,3 +22,7 @@ class AdvertisementViewSet(ModelViewSet):
         if self.action in ["create", "update", "partial_update"]:
             return [IsAuthenticated()]
         return []
+
+class FavouriteAdv(ModelViewSet):
+    """ избранные объявления"""
+    pass

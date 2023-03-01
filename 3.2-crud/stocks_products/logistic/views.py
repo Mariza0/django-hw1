@@ -30,7 +30,7 @@ class StockViewSet(ModelViewSet):
         if search is not None:
             # запрос типа GET{{baseUrl}} / stocks /?products = 2
             product_id = Product.objects.all().filter(title__icontains=search).get().id # list of id product
-            query_prod = StockProduct.objects.filter(product_id=product_id).all() #<QuerySet [<StockProduct: StockProduct object (2)>, <StockProduct: StockProduct object (13)>]>
+            query_prod = StockProduct.objects.filter(product_id=product_id).all()
             list_stock_id = []
             for q in query_prod:
                 list_stock_id.append(q.stock_id)

@@ -10,13 +10,6 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'description']
 
 
-# class FilteredListSerializer(django_filters.FilterSet):
-#
-#     def to_representation(self, data):
-#         data = data.filter(product=self.context['request'].product, edition__hide=False)
-#         return super(FilteredListSerializer, self).to_representation(data)
-
-
 class ProductPositionSerializer(serializers.ModelSerializer):
     # настройте сериализатор для позиции продукта на складе
     class Meta:
@@ -34,17 +27,19 @@ class StockSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         # достаем связанные данные для других таблиц
+        #print('self.request.context', StockSerializer.fields)
         positions = validated_data.pop('positions')
-
         # создаем склад по его параметрам
         stock = super().create(validated_data)
-        # здесь вам надо заполнить связанные таблицы
-        # в нашем случае: таблицу StockProduct
-        positions[0]['stock_id'] = stock.id
-        values_for_update = positions[0]
-        print('values_for_update',values_for_update)
-        stockProduct, created = StockProduct.objects.update_or_create(
-            id=values_for_update.get('product.id'), defaults=values_for_update)
+        for pos in positions:
+            # здесь вам надо заполнить связанные таблицы
+            # в нашем случае: таблицу StockProduct
+            pos['stock_id'] = stock.id
+            values_for_update = pos
+            defaults = {'price': values_for_update.get('price'), 'quantity': values_for_update.get('quantity')}
+            stockProduct, created = StockProduct.objects.update_or_create(stock_id=stock.id,
+                                                                          product_id=values_for_update.get('product').id,
+                                                                          defaults=defaults)
 
         return stock
 
@@ -53,9 +48,12 @@ class StockSerializer(serializers.ModelSerializer):
         positions = validated_data.pop('positions')
         # обновляем склад по его параметрам
         stock = super().update(instance, validated_data)
-        # обновляем таблицу stockproduct
-        values_for_update = positions[0]
-        stockProduct, created = StockProduct.objects.update_or_create(id=values_for_update.get('product.id'),
-                                                                      defaults=values_for_update)
+        for pos in positions:
+            # обновляем таблицу stockproduct
+            values_for_update = pos
+            defaults = {'price': values_for_update.get('price'), 'quantity': values_for_update.get('quantity')}
+            stockProduct, created = StockProduct.objects.update_or_create(stock_id=stock.id,
+                                                                          product_id=values_for_update.get('product').id,
+                                                                          defaults=defaults)
 
         return stock
