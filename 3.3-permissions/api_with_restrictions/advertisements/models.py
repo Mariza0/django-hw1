@@ -5,12 +5,19 @@ from django.db import models
 class AdvertisementStatusChoices(models.TextChoices):
     """Статусы объявления."""
 
+    class Meta:
+        verbose_name = 'статус объявления'
+
+
     OPEN = "OPEN", "Открыто"
     CLOSED = "CLOSED", "Закрыто"
 
 
 class Advertisement(models.Model):
     """Объявление."""
+    class Meta:
+        verbose_name = 'объявление'
+        verbose_name_plural = 'объявления'
 
     title = models.TextField()
     description = models.TextField(default='')
@@ -28,14 +35,20 @@ class Advertisement(models.Model):
     updated_at = models.DateTimeField(
         auto_now=True
     )
+    draft = models.BooleanField(default=True)
 
     def __str__(self):
-        return str(self.id) + " " + self.creator #+ " " + self.status
+        return "id: " + str(self.id) + ", title: " + str(self.title) + ", description: " + self.description
+
 
 class FavouriteAdv(models.Model):
     """ избранные объявления"""
-    fav_adv = models.ForeignKey(Advertisement, on_delete=models.CASCADE)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    class Meta:
+        verbose_name = 'избранное'
+        verbose_name_plural = 'избранные'
+
+    fav_adv = models.ForeignKey(Advertisement, related_name='adv', on_delete=models.CASCADE, verbose_name='обявление')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,)
 
     def __str__(self):
-        return "у пользователя " + str(self.user) + " избранное: " + self.fav_adv
+        return str(self.user)
