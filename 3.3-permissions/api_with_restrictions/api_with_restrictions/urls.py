@@ -22,6 +22,7 @@ from advertisements.views import AdvertisementViewSet, FavouriteAdvViewSet
 
 router = DefaultRouter()
 router.register('advertisements', AdvertisementViewSet, basename='advertisements-list')
+router.register('advertisements/favourites', AdvertisementViewSet, basename='favourites-list')
 router.register('favourites', FavouriteAdvViewSet)
 
 
