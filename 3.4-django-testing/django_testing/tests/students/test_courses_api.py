@@ -34,10 +34,10 @@ def factory_student():
 @pytest.mark.django_db
 def test_courses(client, factory_courses):
     """проверка получения 1-го курса"""
-    courses = factory_courses()
-    response = client.get(path='/api/v1/courses/',)
+    courses = factory_courses(_quantity=1)
+    response = client.get(path='/api/v1/courses/1/',)
     data = response.json()
-    assert data[0]['name'] == courses.name
+    assert data['name'] == courses[0].name
     assert response.status_code == 200
 
 
@@ -49,23 +49,38 @@ def test_courses_list(client, factory_courses):
     data = response.json()
     for i, n in enumerate(data):
         assert n['name'] == courses[i].name
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_courses_list_length(client, factory_courses):
+    """проверка получения списка курсов (list-логика). Проверка длины списка"""
+    courses = factory_courses(_quantity=20)
+    response = client.get(path='/api/v1/courses/',)
+    data = response.json()
     assert len(courses) == len(data)
     assert response.status_code == 200
 
 
 @pytest.mark.django_db
-def test_courses_url(client, factory_courses):
-    """проверка фильтрации списка курсов по id, name"""
+def test_courses_url_id(client, factory_courses):
+    """проверка фильтрации списка курсов по id"""
     courses = factory_courses(_quantity=20)
     c_id = randrange(20)
-    path = '/api/v1/courses/?id=' + str(c_id) + '/'
     response_id = client.get(f'/api/v1/courses/{courses[c_id].id}/')
-    response_name = client.get(f'/api/v1/courses/?name={courses[c_id].name}')
     data_id = response_id.json()
-    data_name = response_name.json()
     assert response_id.status_code == 200
-    assert response_name.status_code == 200
     assert courses[c_id].name == data_id['name']
+
+
+@pytest.mark.django_db
+def test_courses_url_name(client, factory_courses):
+    """проверка фильтрации списка курсов по name"""
+    courses = factory_courses(_quantity=20)
+    c_id = randrange(20)
+    response_name = client.get(f'/api/v1/courses/', {'name': courses[c_id].name})
+    data_name = response_name.json()
+    assert response_name.status_code == 200
     assert courses[c_id].name == data_name[0]['name']
 
 
@@ -74,7 +89,7 @@ def test_create_course(client):
     """тест успешного создания курса"""
     count = Course.objects.count()
     response1 = client.post('/api/v1/courses/', data={'name': 'name1'})
-    response2 = client.get(f'/api/v1/courses/?name={"name1"}')
+    response2 = client.get(f'/api/v1/courses/', {'name': 'name1'})
     response3 = client.get(f'/api/v1/courses/{response1.json()["id"]}/')
     assert response1.status_code == 201
     assert Course.objects.count() == count + 1

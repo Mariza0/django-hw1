@@ -13,6 +13,7 @@ class AdvertisementViewSet(ModelViewSet):
     """ViewSet для объявлений."""
     def get_queryset(self):
         print(self.action)
+        print(self.request.user)
         if self.action in ['retrieve', 'list']:
             query = Advertisement.objects.filter(creator_id=self.request.user.id).filter(draft=True)|\
                     Advertisement.objects.filter(draft=False)
@@ -35,7 +36,8 @@ class AdvertisementViewSet(ModelViewSet):
 
     def get_permissions(self):
         """Получение прав для действий."""
-        if self.action in ["create", "update", "destroy", "partial_update"]:
+        if self.action in ["list", "create", "update", "destroy", "partial_update"]:
+            print(self.request.user)
             if self.request.user.is_superuser:
                 return [IsAuthenticated()]
             return [IsAuthenticated(), IsOwnerOrReadOnly()]
